@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Business Performance & Revenue Analytics</title>
+<style>
+:root{--bg:#f4f6fb;--card:#fff;--tx:#12203a;--mu:#6b7690;--bd:#e3e8f2;--pr:#2563eb;--g:#10b981;--o:#f59e0b;--r:#ef4444;--p:#8b5cf6;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#0e1424;--card:#171f35;--tx:#e8edf8;--mu:#93a0bd;--bd:#27314d;color-scheme:dark}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:14px/1.45 system-ui,"Segoe UI",sans-serif}
+.w{max-width:1400px;margin:auto;padding:20px}
+header{display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;align-items:flex-end}
+h1{margin:0;font-size:24px}h2{font-size:17px;margin:28px 0 10px}h3{margin:0 0 10px;font-size:14px}
+.sub{color:var(--mu)}
+.f{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+button,select,input{font:inherit;color:var(--tx);background:var(--card);border:1px solid var(--bd);border-radius:8px;padding:7px 12px}
+button{cursor:pointer}button.on{background:var(--pr);color:#fff;border-color:var(--pr)}
+button:focus-visible,tr.c:focus-visible{outline:2px solid var(--pr)}
+.g{display:grid;gap:14px;margin-top:14px}
+.k{grid-template-columns:repeat(auto-fit,minmax(160px,1fr))}
+.c2{grid-template-columns:repeat(auto-fit,minmax(340px,1fr))}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:16px;min-width:0}
+.big{font-size:26px;font-weight:700}.sm{font-size:12px;color:var(--mu)}
+.up{color:var(--g)}.dn{color:var(--r)}
+.row{display:grid;grid-template-columns:110px 1fr auto;gap:8px;align-items:center;margin:6px 0;font-size:13px}
+.bar{height:10px;background:var(--bd);border-radius:6px;overflow:hidden;display:flex}.bar i{display:block;height:100%}
+.sc{overflow-x:auto}table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{padding:7px 8px;text-align:right;border-bottom:1px solid var(--bd);white-space:nowrap}th:first-child,td:first-child{text-align:left}
+th{color:var(--mu);font-weight:600}tr.c{cursor:pointer}tr.c:hover{background:var(--bg)}
+.tag{padding:2px 8px;border-radius:10px;font-size:11px;background:var(--bd)}
+#m{position:fixed;inset:0;background:#0008;display:none;align-items:flex-start;justify-content:center;padding:30px 12px;overflow:auto;z-index:9}
+#m .card{max-width:860px;width:100%}
+svg text{fill:var(--mu);font-size:10px}
+</style></head><body><div class="w">
+<header><div><h1>Business Performance & Revenue Analytics</h1><div class="sub">Leads, quotations, deals, orders and revenue. Dummy data, click any row to drill down.</div></div>
+<div class="f" id="flt"></div></header>
+<div id="app"></div></div>
+<div id="m" onclick="if(event.target===this)this.style.display='none'"><div class="card" id="mb"></div></div>
+<script>
+// ---------- dummy data ----------
+let s=7;const rnd=()=>{s|=0;s=s+0x6D2B79F5|0;let t=Math.imul(s^s>>>15,1|s);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296};
+const pick=a=>a[Math.floor(rnd()*a.length)];
+const T=new Date('2026-10-17T00:00:00');
+const ds=d=>{const x=new Date(T-d*864e5);return x.toISOString().slice(0,10)};
+const SV=[['Private Limited',9000],['LLP Registration',6000],['GST Registration',4000],['Trademark',5000],['FSSAI License',3500],['Annual Compliance',5500],['ISO Certification',8000]];
+const SRC=['Google Ads','Website','Just Dial','Other'],USERS=['Nancy Singh','Sneha Choudhary','Tannu Kumari'],PRI=['High','Medium','Low'];
+const L=[],Q=[],D=[],O=[],P=[];
+for(let d=119;d>=0;d--){const n=3+Math.floor(rnd()*5);for(let i=0;i<n;i++){const r=rnd();
+ const l={id:'L-'+(200000+L.length),d,src:pick([...SRC,'Google Ads','Google Ads','Website']),user:pick(USERS),name:pick(['Aarav','Diya','Rohan','Meera','Kabir','Isha','Vihaan','Anaya','Arjun','Sana'])+' '+pick(['Shah','Patel','Rao','Khan','Iyer','Verma','Joshi','Nair']),st:r<.2?'New':r<.45?'Qualified':r<.65?'Converted':'Unqualified'};L.push(l);
+ if(l.st==='Qualified'||l.st==='Converted'){const nq=1+Math.floor(rnd()*3);let won=false;
+  for(let j=0;j<nq;j++){const sv=pick(SV),amt=Math.round(sv[1]*(.7+rnd()*.8)/100)*100;
+   const acc=l.st==='Converted'&&!won&&(j===nq-1||rnd()<.5);if(acc)won=true;
+   const q={id:'Q-'+(10000+Q.length),lead:l.id,d:Math.max(0,d-Math.floor(rnd()*3)),sv:sv[0],amt,st:acc?'Accepted':rnd()<.2?'Rejected':'Pending'};Q.push(q);
+   if(acc){const dl={id:'D-'+(800+D.length),lead:l.id,q:q.id,d:Math.max(0,q.d-Math.floor(rnd()*3)),sv:sv[0],val:amt,pri:pick(PRI),user:l.user};D.push(dl);
+    const no=1+Math.floor(rnd()*3);for(let k=0;k<no;k++)O.push({id:'O-'+(2000+O.length),deal:dl.id,d:Math.max(0,dl.d-k),sv:sv[0],st:pick(['Pending','In Progress','Completed','Completed','On Hold']),prog:Math.floor(rnd()*101)});
+    let paid=0;const np=Math.floor(rnd()*3);for(let k=0;k<np;k++){const a=Math.round(amt*(.2+rnd()*.4));if(paid+a>amt)break;paid+=a;P.push({id:'P-'+(1000+P.length),deal:dl.id,d:Math.max(0,dl.d-k*2),amt:a,mode:pick(['UPI','Bank Transfer','Card'])})}}}}}}
+// ---------- state ----------
+let lo=0,hi=29,mode='30';
+const inR=(d,a,b)=>d>=a&&d<=b;
+const fmt=n=>'₹'+Math.round(n).toLocaleString('en-IN');
+const pc=(c,p)=>p?(c-p)/p*100:(c?100:0);
+const dl=(c,p)=>{const v=pc(c,p);return `<span class="${v>=0?'up':'dn'}">${v>=0?'▲':'▼'} ${Math.abs(v).toFixed(1)}%</span> <span class="sm">vs previous period</span>`};
+const sum=(a,f)=>a.reduce((x,y)=>x+f(y),0);
+const cnt=(a,f)=>a.filter(f).length;
+const grp=(a,k)=>{const m={};a.forEach(x=>(m[k(x)]=m[k(x)]||[]).push(x));return m};
+function bars(items,f=v=>v,col='var(--pr)'){const mx=Math.max(1,...items.map(i=>i.v));return items.length?items.map(i=>`<div class="row"><span title="${i.l}" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${i.l}</span><div class="bar"><i style="width:${i.v/mx*100}%;background:${i.c||col}"></i></div><b>${f(i.v)}</b></div>`).join(''):'<div class="sm">No data in this range</div>'}
+function line(days,series,cols){const W=600,H=170,mx=Math.max(1,...series.flat()),n=days.length;const x=i=>30+i*(W-40)/Math.max(1,n-1),y=v=>H-20-v/mx*(H-35);
+ let o=`<svg viewBox="0 0 ${W} ${H}" width="100%" role="img"><line x1="30" x2="${W-10}" y1="${H-20}" y2="${H-20}" stroke="var(--bd)"/>`;
+ [0,.5,1].forEach(t=>o+=`<text x="2" y="${y(mx*t)+3}">${Math.round(mx*t)}</text>`);
+ const st=Math.ceil(n/8);days.forEach((d,i)=>{if(i%st===0)o+=`<text x="${x(i)-12}" y="${H-5}">${ds(d).slice(5)}</text>`});
+ series.forEach((s,k)=>o+=`<polyline fill="none" stroke="${cols[k]}" stroke-width="2" points="${s.map((v,i)=>x(i)+','+y(v)).join(' ')}"/>`);return o+'</svg>'}
+function colchart(days,a,b,ca,cb){const W=600,H=170,mx=Math.max(1,...a,...b),n=days.length,bw=(W-40)/n;
+ let o=`<svg viewBox="0 0 ${W} ${H}" width="100%"><line x1="30" x2="${W-10}" y1="${H-20}" y2="${H-20}" stroke="var(--bd)"/><text x="0" y="12">${fmt(mx)}</text>`;
+ days.forEach((d,i)=>{const h1=a[i]/mx*(H-40),h2=b[i]/mx*(H-40),x=30+i*bw;o+=`<rect x="${x}" y="${H-20-h1}" width="${Math.max(1,bw*.4)}" height="${h1}" fill="${ca}"><title>${ds(d)} ${fmt(a[i])}</title></rect><rect x="${x+bw*.42}" y="${H-20-h2}" width="${Math.max(1,bw*.4)}" height="${h2}" fill="${cb}"/>`;if(i%Math.ceil(n/8)===0)o+=`<text x="${x}" y="${H-5}">${ds(d).slice(5)}</text>`});return o+'</svg>'}
+const tbl=(h,r,click)=>`<div class="sc"><table><tr>${h.map(x=>`<th>${x}</th>`).join('')}</tr>${r.map(x=>`<tr ${x.go?`class="c" tabindex="0" onclick="${x.go}" onkeydown="if(event.key==='Enter')${x.go}"`:''}>${x.c.map(v=>`<td>${v}</td>`).join('')}</tr>`).join('')||`<tr><td colspan="${h.length}" class="sm">No records</td></tr>`}</table></div>`;
+const card=(t,b)=>`<div class="card"><h3>${t}</h3>${b}</div>`;
+const kpi=(t,v,c,p,extra='')=>`<div class="card"><div class="sm">${t}</div><div class="big">${v}</div><div class="sm">${extra}</div><div style="font-size:12px">${dl(c,p)}</div></div>`;
+// ---------- render ----------
+function render(){
+ const len=hi-lo+1,plo=hi+1,phi=hi+len;
+ const f=(a,k='d')=>[a.filter(x=>inR(x[k],lo,hi)),a.filter(x=>inR(x[k],plo,phi))];
+ const [l,pl]=f(L),[q,pq]=f(Q),[d,pd]=f(D),[o]=f(O),[p,pp]=f(P);
+ const days=[];for(let i=hi;i>=lo;i--)days.push(i);
+ const qual=a=>cnt(a,x=>x.st==='Qualified'||x.st==='Converted'),conv=a=>cnt(a,x=>x.st==='Converted'),unq=a=>cnt(a,x=>x.st==='Unqualified');
+ const cr=a=>a.length?conv(a)/a.length*100:0;
+ const rev=sum(d,x=>x.val),col=sum(p,x=>x.amt),prevRev=sum(pd,x=>x.val);
+ const dealsAll=D.filter(x=>inR(x.d,lo,hi)),paidBy={};P.forEach(x=>paidBy[x.deal]=(paidBy[x.deal]||0)+x.amt);
+ const out=sum(dealsAll,x=>x.val-(paidBy[x.id]||0));
+ const A=[];
+ A.push(`<div class="g k">${kpi('New Leads',l.length,l.length,pl.length)}${kpi('Qualified Leads',qual(l),qual(l),qual(pl),(l.length?qual(l)/l.length*100:0).toFixed(1)+'% of leads')}${kpi('Converted Leads',conv(l),conv(l),conv(pl))}${kpi('Unqualified Leads',unq(l),unq(l),unq(pl))}${kpi('Conversion Rate',cr(l).toFixed(1)+'%',cr(l),cr(pl))}${kpi('Quotations',q.length,q.length,pq.length)}${kpi('Deals Created',d.length,d.length,pd.length)}${kpi('Revenue',fmt(rev),rev,prevRev)}</div>`);
+ A.push('<h2>Lead analytics</h2><div class="g c2">');
+ const fun=[{l:'New leads',v:l.length,c:'var(--pr)'},{l:'Qualified',v:qual(l),c:'var(--g)'},{l:'Converted',v:conv(l),c:'var(--o)'},{l:'Unqualified',v:unq(l),c:'var(--r)'}];
+ A.push(card('Lead funnel',bars(fun)));
+ const bd=days.map(i=>L.filter(x=>x.d===i));
+ A.push(card('Daily lead trend <span class="sm">blue new, green qualified, orange converted</span>',line(days,[bd.map(a=>a.length),bd.map(qual),bd.map(conv)],['#2563eb','#10b981','#f59e0b'])));
+ const gs=grp(l,x=>x.src);A.push(card('Lead sources',bars(SRC.map(k=>({l:k,v:(gs[k]||[]).length})),v=>`${v} (${l.length?Math.round(v/l.length*100):0}%)`,'var(--p)')));
+ A.push(card('Lead status',bars(['New','Qualified','Converted','Unqualified'].map((k,i)=>({l:k,v:cnt(l,x=>x.st===k),c:['var(--pr)','var(--g)','var(--o)','var(--r)'][i]})))));
+ A.push('</div><h2>Leads (click a row for lead-wise history)</h2>');
+ A.push(`<div class="card"><div class="f" style="margin-bottom:8px"><input id="ls" placeholder="Search lead name or ID" oninput="lt()"><select id="lf" onchange="lt()"><option value="">All statuses</option><option>New</option><option>Qualified</option><option>Converted</option><option>Unqualified</option></select></div><div id="lt"></div></div>`);
+ A.push('<h2>Quotation analytics</h2><div class="g c2">');
+ const gq=grp(q,x=>x.sv);const sq=SV.map(([n])=>({n,a:gq[n]||[]})).sort((a,b)=>b.a.length-a.a.length);
+ A.push(card('Quotations by service',bars(sq.map(x=>({l:x.n,v:x.a.length})))));
+ A.push(card('Quotation value by service',bars(sq.map(x=>({l:x.n,v:sum(x.a,y=>y.amt)})),fmt,'var(--g)')));
+ const qa=cnt(q,x=>x.st==='Accepted');
+ A.push(card('Quote to deal conversion',`<div class="big">${q.length?(qa/q.length*100).toFixed(1):0}%</div><div class="sm">${qa} accepted / ${q.length} quotations</div><div style="margin-top:8px">${bars(['Accepted','Pending','Rejected'].map((k,i)=>({l:k,v:cnt(q,x=>x.st===k),c:['var(--g)','var(--o)','var(--r)'][i]})))}</div>`));
+ A.push(card('Service-wise quotation details',tbl(['Service','Quotes','Amount','Accepted','Pending','Rejected','Conv.'],sq.map(x=>({c:[x.n,x.a.length,fmt(sum(x.a,y=>y.amt)),...['Accepted','Pending','Rejected'].map(k=>cnt(x.a,y=>y.st===k)),(x.a.length?cnt(x.a,y=>y.st==='Accepted')/x.a.length*100:0).toFixed(0)+'%']})))));
+ A.push('</div><h2>Deals & revenue</h2><div class="g c2">');
+ const gd=grp(d,x=>x.sv);const sd=SV.map(([n])=>({n,a:gd[n]||[]})).sort((a,b)=>sum(b.a,x=>x.val)-sum(a.a,x=>x.val));
+ A.push(card('Deals and revenue by service',tbl(['Service','Deals','Revenue'],sd.map(x=>({c:[x.n,x.a.length,fmt(sum(x.a,y=>y.val))]})))));
+ A.push(card('Revenue by category',bars(sd.map(x=>({l:x.n,v:sum(x.a,y=>y.val)})),fmt,'var(--pr)')));
+ A.push(card('Priority breakdown',tbl(['Priority','Deals','Revenue','%'],PRI.map(k=>{const a=d.filter(x=>x.pri===k);return{c:[k,a.length,fmt(sum(a,x=>x.val)),(rev?sum(a,x=>x.val)/rev*100:0).toFixed(1)+'%']}}))));
+ A.push(card('Total vs collected revenue',`<div class="f" style="gap:24px"><div><div class="sm">Total deal value</div><div class="big">${fmt(rev)}</div></div><div><div class="sm">Collected (payments in range)</div><div class="big up">${fmt(col)}</div></div><div><div class="sm">Outstanding (deals in range)</div><div class="big dn">${fmt(out)}</div></div></div><div class="sm" style="margin-top:6px">Collected ${dl(col,sum(pp,x=>x.amt))}</div>`));
+ A.push(card('Daily revenue trend <span class="sm">blue revenue, green collected</span>',colchart(days,days.map(i=>sum(D.filter(x=>x.d===i),x=>x.val)),days.map(i=>sum(P.filter(x=>x.d===i),x=>x.amt)),'#2563eb','#10b981')));
+ A.push(card('Collection trend (cumulative)',(()=>{let c=0;const s=days.map(i=>c+=sum(P.filter(x=>x.d===i),x=>x.amt));return line(days,[s],['#10b981'])})()));
+ A.push('</div><h2>Deal progress (click a deal for orders and payments)</h2><div class="card">'+tbl(['Deal','Lead','Service','Priority','Value','Paid','Progress'],d.slice().sort((a,b)=>a.d-b.d).slice(0,25).map(x=>{const pd=paidBy[x.id]||0;return{go:`dd('${x.id}')`,c:[x.id,x.lead,x.sv,x.pri,fmt(x.val),fmt(pd),Math.round(pd/x.val*100)+'%']}}))+'</div>');
+ A.push('<h2>Orders & payments</h2><div class="g c2">');
+ const os=['Pending','In Progress','Completed','On Hold'];
+ A.push(card('Order status',bars(os.map((k,i)=>({l:k,v:cnt(o,x=>x.st===k),c:['var(--o)','var(--pr)','var(--g)','var(--r)'][i]})))));
+ const gos=grp(o,x=>x.sv);A.push(card('Order progress by service',tbl(['Service','Orders','Completed','Avg progress'],Object.keys(gos).map(k=>({c:[k,gos[k].length,cnt(gos[k],x=>x.st==='Completed'),Math.round(sum(gos[k],x=>x.prog)/gos[k].length)+'%']})))));
+ A.push(card('Completed orders',tbl(['Order','Deal','Service'],o.filter(x=>x.st==='Completed').slice(0,10).map(x=>({go:`dd('${x.deal}')`,c:[x.id,x.deal,x.sv]})))));
+ A.push(card('Payment history',tbl(['Payment','Deal','Date','Mode','Amount'],p.slice().sort((a,b)=>a.d-b.d).slice(0,10).map(x=>({go:`dd('${x.deal}')`,c:[x.id,x.deal,ds(x.d),x.mode,fmt(x.amt)]})))));
+ A.push('</div>');
+ document.getElementById('app').innerHTML=A.join('');
+ window.CUR=l;lt();
+}
+function lt(){const q=(document.getElementById('ls').value||'').toLowerCase(),s=document.getElementById('lf').value;
+ const r=CUR.filter(x=>(!s||x.st===s)&&(!q||(x.name+x.id).toLowerCase().includes(q))).slice(0,15);
+ document.getElementById('lt').innerHTML=tbl(['Lead','Name','Date','Source','Owner','Status'],r.map(x=>({go:`ld('${x.id}')`,c:[x.id,x.name,ds(x.d),x.src,x.user,`<span class="tag">${x.st}</span>`]})))}
+const M=h=>{document.getElementById('mb').innerHTML=`<div class="f" style="justify-content:space-between"><span></span><button onclick="document.getElementById('m').style.display='none'">Close</button></div>`+h;document.getElementById('m').style.display='flex'};
+function ld(id){const l=L.find(x=>x.id===id),q=Q.filter(x=>x.lead===id),d=D.filter(x=>x.lead===id);
+ M(`<h3 style="font-size:18px">${l.name} <span class="tag">${l.st}</span></h3><div class="sm">${l.id} · ${ds(l.d)} · ${l.src} · Owner ${l.user}</div><h3 style="margin-top:14px">Quotations (${q.length})</h3>${tbl(['Quote','Date','Service','Amount','Status'],q.map(x=>({c:[x.id,ds(x.d),x.sv,fmt(x.amt),x.st]})))}<h3 style="margin-top:14px">Deals (${d.length})</h3>${tbl(['Deal','Service','Priority','Value'],d.map(x=>({go:`dd('${x.id}')`,c:[x.id,x.sv,x.pri,fmt(x.val)]})))}`)}
+function dd(id){const x=D.find(y=>y.id===id),o=O.filter(y=>y.deal===id),p=P.filter(y=>y.deal===id),paid=sum(p,y=>y.amt);
+ M(`<h3 style="font-size:18px">${x.id} · ${x.sv}</h3><div class="sm">Lead <a href="#" onclick="ld('${x.lead}');return false">${x.lead}</a> · Quote ${x.q} · ${x.pri} priority · ${ds(x.d)}</div><div class="f" style="gap:24px;margin:10px 0"><div><div class="sm">Deal value</div><b>${fmt(x.val)}</b></div><div><div class="sm">Collected</div><b class="up">${fmt(paid)}</b></div><div><div class="sm">Outstanding</div><b class="dn">${fmt(x.val-paid)}</b></div></div><h3>Orders (${o.length})</h3>${tbl(['Order','Date','Status','Progress'],o.map(y=>({c:[y.id,ds(y.d),y.st,`<div class="bar" style="width:100px;display:inline-flex"><i style="width:${y.prog}%;background:var(--g)"></i></div> ${y.prog}%`]})))}<h3 style="margin-top:14px">Payments (${p.length})</h3>${tbl(['Payment','Date','Mode','Amount'],p.map(y=>({c:[y.id,ds(y.d),y.mode,fmt(y.amt)]})))}`)}
+// ---------- filters ----------
+function fl(){const b=[['0','Today'],['7','Last 7 Days'],['30','Last 30 Days'],['c','Custom']];
+ document.getElementById('flt').innerHTML=b.map(([k,t])=>`<button class="${mode===k?'on':''}" onclick="sf('${k}')">${t}</button>`).join('')+(mode==='c'?`<input type="date" id="a" value="${ds(hi==lo&&0?0:window.CA||29)}" max="2026-10-17" onchange="cd()"><span>to</span><input type="date" id="b" value="${ds(window.CB||0)}" max="2026-10-17" onchange="cd()">`:'')}
+function sf(k){mode=k;if(k==='0'){lo=0;hi=0}else if(k==='7'){lo=0;hi=6}else if(k==='30'){lo=0;hi=29}else{lo=window.CB||0;hi=window.CA||29}fl();render()}
+function cd(){const a=Math.round((T-new Date(document.getElementById('a').value))/864e5),b=Math.round((T-new Date(document.getElementById('b').value))/864e5);
+ if(isNaN(a)||isNaN(b))return;window.CA=Math.max(a,b);window.CB=Math.min(a,b);lo=window.CB;hi=window.CA;render()}
+fl();render();
+</script></body></html>
